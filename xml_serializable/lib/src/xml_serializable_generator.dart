@@ -480,6 +480,6 @@ class XmlSerializableGenerator extends GeneratorForAnnotation<XmlSerializable> {
       }
     }
 
-    return _serializerGeneratorFactory(type);
+    return _serializerGeneratorFactory(element, type);
   }
 }

@@ -17,24 +17,26 @@ import '../serializer_generators/uri_serializer_generator.dart';
 
 /// Creates a [SerializerGenerator] from a [DartType].
 typedef SerializerGeneratorFactory = SerializerGenerator Function(
+  FieldElement element,
   DartType type,
 );
 
 /// Creates a [SerializerGenerator] from a [DartType] that represents a [bool], [DateTime], [double], [Duration], [dynamic], [enum], [int], [Iterable], [List], [num], [Set], [String], or [Uri].
-SerializerGenerator serializerGeneratorFactory(DartType type) {
+SerializerGenerator serializerGeneratorFactory(
+    FieldElement element, DartType type) {
   if (type is ParameterizedType && type.isDartCoreIterable) {
     return IterableSerializerGenerator(
-      serializerGeneratorFactory(type.typeArguments.single),
+      serializerGeneratorFactory(element, type.typeArguments.single),
       isNullable: type.isNullable,
     );
   } else if (type is ParameterizedType && type.isDartCoreList) {
     return ListSerializerGenerator(
-      serializerGeneratorFactory(type.typeArguments.single),
+      serializerGeneratorFactory(element, type.typeArguments.single),
       isNullable: type.isNullable,
     );
   } else if (type is ParameterizedType && type.isDartCoreSet) {
     return SetSerializerGenerator(
-      serializerGeneratorFactory(type.typeArguments.single),
+      serializerGeneratorFactory(element, type.typeArguments.single),
       isNullable: type.isNullable,
     );
   } else if (type.isDartCoreBool) {
@@ -56,8 +58,18 @@ SerializerGenerator serializerGeneratorFactory(DartType type) {
   } else if (type.isDartCoreUri) {
     return UriSerializerGenerator(isNullable: type.isNullable);
   } else if (type is InterfaceType && type.element is EnumElement) {
+    for (final import in element.library.libraryImports) {
+      for (final entry in import.namespace.definedNames.entries) {
+        if (entry.value == type.element) {
+          return EnumSerializerGenerator(
+            '${entry.key.split(".").first}.\$${type.element.name}',
+            isNullable: type.isNullable,
+          );
+        }
+      }
+    }
     return EnumSerializerGenerator(
-      type.element.name,
+      "\$${type.element.name}",
       isNullable: type.isNullable,
     );
   }

@@ -22,7 +22,7 @@ class EnumSerializerGenerator extends SerializerGenerator {
       buffer.write('$expression != null ? ');
     }
 
-    buffer.write('\$${_type}EnumMap[$expression]!');
+    buffer.write('${_type}EnumMap[$expression]!');
 
     if (_isNullable) {
       buffer.write(' : null');
@@ -40,7 +40,7 @@ class EnumSerializerGenerator extends SerializerGenerator {
     }
 
     buffer.write(
-      '\$${_type}EnumMap.entries.singleWhere((${_type.camelCase}EnumMapEntry) => ${_type.camelCase}EnumMapEntry.value == $expression, orElse: () => throw ArgumentError(\'`\$$expression` is not one of the supported values: \${\$${_type}EnumMap.values.join(\', \')}\')).key',
+      '${_type}EnumMap.entries.singleWhere((enumEntry) => enumEntry.value == $expression, orElse: () => throw ArgumentError(\'`\$$expression` is not one of the supported values: \${${_type}EnumMap.values.join(\', \')}\')).key',
     );
 
     if (_isNullable) {
