@@ -58,18 +58,26 @@ SerializerGenerator serializerGeneratorFactory(
   } else if (type.isDartCoreUri) {
     return UriSerializerGenerator(isNullable: type.isNullable);
   } else if (type is InterfaceType && type.element is EnumElement) {
+    for (final element in element.library.topLevelElements) {
+      if (element == type.element) {
+        return EnumSerializerGenerator(
+          element.name!,
+          isNullable: type.isNullable,
+        );
+      }
+    }
     for (final import in element.library.libraryImports) {
       for (final entry in import.namespace.definedNames.entries) {
         if (entry.value == type.element) {
           return EnumSerializerGenerator(
-            '${entry.key.split(".").first}.\$${type.element.name}',
+            entry.key,
             isNullable: type.isNullable,
           );
         }
       }
     }
     return EnumSerializerGenerator(
-      "\$${type.element.name}",
+      type.element.name,
       isNullable: type.isNullable,
     );
   }

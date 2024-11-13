@@ -14,6 +14,14 @@ class EnumSerializerGenerator extends SerializerGenerator {
     bool isNullable = false,
   }) : _isNullable = isNullable;
 
+  String get _enumMap {
+    if (_type.contains(".")) {
+      final index = _type.indexOf(".");
+      return "${_type.substring(0, index)}.\$${_type.substring(index + 1)}";
+    }
+    return "\$$_type";
+  }
+
   @override
   String generateSerializer(String expression) {
     final buffer = StringBuffer();
@@ -22,7 +30,7 @@ class EnumSerializerGenerator extends SerializerGenerator {
       buffer.write('$expression != null ? ');
     }
 
-    buffer.write('${_type}EnumMap[$expression]!');
+    buffer.write('${_enumMap}EnumMap[$expression]!');
 
     if (_isNullable) {
       buffer.write(' : null');
@@ -40,7 +48,7 @@ class EnumSerializerGenerator extends SerializerGenerator {
     }
 
     buffer.write(
-      '${_type}EnumMap.entries.singleWhere((enumEntry) => enumEntry.value == $expression, orElse: () => throw ArgumentError(\'`\$$expression` is not one of the supported values: \${${_type}EnumMap.values.join(\', \')}\')).key',
+      '${_enumMap}EnumMap.entries.singleWhere((enumEntry) => enumEntry.value == $expression, orElse: () => throw ArgumentError(\'`\$$expression` is not one of the supported values: \${${_enumMap}EnumMap.values.join(\', \')}\')).key',
     );
 
     if (_isNullable) {
