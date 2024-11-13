@@ -12,8 +12,10 @@ import 'generator_factories/builder_generator_factory.dart';
 import 'generator_factories/constructor_generator_factory.dart';
 import 'generator_factories/getter_generator_factory.dart';
 import 'generator_factories/serializer_generator_factory.dart';
+import 'serializer_generators/string_iterable_serializer_generator.dart';
 import 'serializer_generators/iterable_serializer_generator.dart';
 import 'serializer_generators/serializer_generator.dart';
+import 'serializer_generators/xml_converter_xml_attribute_serializer_generator.dart';
 import 'serializer_generators/xml_converter_xml_element_serializer_generator.dart';
 import 'serializer_generators/xml_serializable_xml_element_serializer_generator.dart';
 
@@ -236,16 +238,7 @@ class XmlSerializableGenerator extends GeneratorForAnnotation<XmlSerializable> {
           buffer.write('if (${element.name}Constructed != null) { ');
         }
 
-        if (element.type.isDartCoreIterable ||
-            element.type.isDartCoreList ||
-            element.type.isDartCoreSet) {
-          throw InvalidGenerationSourceError(
-            '`@XmlAttribute()` cannot be used on fields of an iterable type due to https://www.w3.org/TR/xml/#uniqattspec.',
-            element: element,
-          );
-        } else {
-          buffer.write('attributes.add(${element.name}Constructed);');
-        }
+        buffer.write('attributes.add(${element.name}Constructed);');
 
         if (_doesRequireNullCheck(element)) {
           buffer.write(' }');
@@ -412,6 +405,72 @@ class XmlSerializableGenerator extends GeneratorForAnnotation<XmlSerializable> {
         );
       } else if (type is ParameterizedType && type.isDartCoreSet) {
         return SetSerializerGenerator(
+          _xmlSerializableSerializerGeneratorFactory(
+            element,
+            type: type.typeArguments.single,
+          ),
+          isNullable: type.isNullable,
+        );
+      }
+    }
+
+    if (element.hasXmlAttribute) {
+      final converterElement = element.getXmlConverterElement(type: type);
+      if (converterElement is ClassElement) {
+        return XmlConverterXmlAttributeSerializerGenerator(
+          converterElement.name,
+          isNullable: type.isNullable,
+          isConverterNullable: converterElement.thisType.allSupertypes.any(
+            (supertype) =>
+                supertype.element.library.identifier ==
+                    'package:xml_annotation/src/annotations/xml_converter.dart' &&
+                supertype.element.name == 'XmlConverter' &&
+                supertype.typeArguments.single.isNullable,
+          ),
+        );
+      } else if (type is InterfaceType && type.element.hasXmlSerializable) {
+        for (final element in element.library.topLevelElements) {
+          if (element == type.element) {
+            return XmlConverterXmlAttributeSerializerGenerator(
+              element.name!,
+              isNullable: type.isNullable,
+            );
+          }
+        }
+
+        for (final import in element.library.libraryImports) {
+          for (final entry in import.namespace.definedNames.entries) {
+            if (entry.value == type.element) {
+              return XmlConverterXmlAttributeSerializerGenerator(
+                entry.key,
+                isNullable: type.isNullable,
+              );
+            }
+          }
+        }
+
+        return XmlConverterXmlAttributeSerializerGenerator(
+          type.element.name,
+          isNullable: type.isNullable,
+        );
+      } else if (type is ParameterizedType && type.isDartCoreIterable) {
+        return StringIterableSerializerGenerator(
+          _xmlSerializableSerializerGeneratorFactory(
+            element,
+            type: type.typeArguments.single,
+          ),
+          isNullable: type.isNullable,
+        );
+      } else if (type is ParameterizedType && type.isDartCoreList) {
+        return StringListSerializerGenerator(
+          _xmlSerializableSerializerGeneratorFactory(
+            element,
+            type: type.typeArguments.single,
+          ),
+          isNullable: type.isNullable,
+        );
+      } else if (type is ParameterizedType && type.isDartCoreSet) {
+        return StringSetSerializerGenerator(
           _xmlSerializableSerializerGeneratorFactory(
             element,
             type: type.typeArguments.single,
