@@ -26,7 +26,7 @@ class StringIterableSerializerGenerator extends SerializerGenerator {
       buffer.write('?');
     }
 
-    buffer.write(".map(($closureArgument) => $closureResult).join(" ")");
+    buffer.write(".map(($closureArgument) => $closureResult).join(' ')");
 
     return buffer.toString();
   }
