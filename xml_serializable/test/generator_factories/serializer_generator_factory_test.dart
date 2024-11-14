@@ -6,6 +6,7 @@ import '../fake_date_time_class_element.dart';
 import '../fake_double_class_element.dart';
 import '../fake_duration_class_element.dart';
 import '../fake_dynamic_type.dart';
+import '../fake_field_element.dart';
 import '../fake_int_class_element.dart';
 import '../fake_interface_type.dart';
 import '../fake_iterable_class_element.dart';
@@ -24,6 +25,7 @@ void main() {
         () {
           expect(
             serializerGeneratorFactory(
+              FakeFieldElement(),
               FakeInterfaceType(
                 element: FakeBoolClassElement(),
                 isDartCoreBool: true,
@@ -39,6 +41,7 @@ void main() {
         () {
           expect(
             serializerGeneratorFactory(
+              FakeFieldElement(),
               FakeInterfaceType(
                 element: FakeDateTimeClassElement(),
               ),
@@ -53,6 +56,7 @@ void main() {
         () {
           expect(
             serializerGeneratorFactory(
+              FakeFieldElement(),
               FakeInterfaceType(
                 element: FakeDoubleClassElement(),
                 isDartCoreDouble: true,
@@ -68,6 +72,7 @@ void main() {
         () {
           expect(
             serializerGeneratorFactory(
+              FakeFieldElement(),
               FakeInterfaceType(
                 element: FakeDurationClassElement(),
               ),
@@ -82,6 +87,7 @@ void main() {
         () {
           expect(
             serializerGeneratorFactory(
+              FakeFieldElement(),
               FakeDynamicType(),
             ),
             isA<DynamicSerializerGenerator>(),
@@ -94,6 +100,7 @@ void main() {
         () {
           expect(
             serializerGeneratorFactory(
+              FakeFieldElement(),
               FakeInterfaceType(
                 element: FakeIntClassElement(),
                 isDartCoreInt: true,
@@ -109,6 +116,7 @@ void main() {
         () {
           expect(
             serializerGeneratorFactory(
+              FakeFieldElement(),
               FakeInterfaceType(
                 element: FakeIterableClassElement(),
                 isDartCoreIterable: true,
@@ -130,6 +138,7 @@ void main() {
         () {
           expect(
             serializerGeneratorFactory(
+              FakeFieldElement(),
               FakeInterfaceType(
                 element: FakeListClassElement(),
                 isDartCoreList: true,
@@ -151,6 +160,7 @@ void main() {
         () {
           expect(
             serializerGeneratorFactory(
+              FakeFieldElement(),
               FakeInterfaceType(
                 element: FakeNumClassElement(),
                 isDartCoreNum: true,
@@ -166,6 +176,7 @@ void main() {
         () {
           expect(
             serializerGeneratorFactory(
+              FakeFieldElement(),
               FakeInterfaceType(
                 element: FakeSetClassElement(),
                 isDartCoreSet: true,
@@ -187,6 +198,7 @@ void main() {
         () {
           expect(
             serializerGeneratorFactory(
+              FakeFieldElement(),
               FakeInterfaceType(
                 element: FakeStringClassElement(),
                 isDartCoreString: true,
@@ -202,6 +214,7 @@ void main() {
         () {
           expect(
             serializerGeneratorFactory(
+              FakeFieldElement(),
               FakeInterfaceType(
                 element: FakeUriClassElement(),
               ),
@@ -216,6 +229,7 @@ void main() {
         () {
           expect(
             () => serializerGeneratorFactory(
+              FakeFieldElement(),
               FakeInterfaceType(),
             ),
             throwsA(isA<ArgumentError>()),
