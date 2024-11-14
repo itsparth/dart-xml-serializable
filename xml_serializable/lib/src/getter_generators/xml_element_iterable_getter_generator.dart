@@ -23,7 +23,7 @@ abstract class XmlElementIterableGetterGenerator extends GetterGenerator {
   String generateGetter(String expression) {
     final buffer = StringBuffer(expression);
 
-    buffer.write('.getElements(${escapeDartString(_name)}');
+    buffer.write('.findElements(${escapeDartString(_name)}');
 
     if (_namespace != null) {
       buffer.write(', namespace: ${escapeDartString(_namespace!)}');
@@ -31,9 +31,9 @@ abstract class XmlElementIterableGetterGenerator extends GetterGenerator {
 
     buffer.write(')');
 
-    if (!_isNullable) {
-      buffer.write('!');
-    }
+    // if (!_isNullable) {
+    //   buffer.write('!');
+    // }
 
     return buffer.toString();
   }
